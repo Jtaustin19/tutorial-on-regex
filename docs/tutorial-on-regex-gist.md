@@ -1,10 +1,19 @@
-# Tutorial on Regex
+# Tutorial on RegEx Email Addresses
 
-Introductory paragraph (replace this with your text)
+RegEx (Regular Expressions) can be a chioce a developer makes when creating apps that will validate information that users are entering into a database. When first looking at regex, the user may think its just a bunch of gibberish, but with the right rescources, practice, and a little patients. The user will be a mater in no time!
+
+
 
 ## Summary
 
-Briefly summarize the regex you will be describing and what you will explain. Include a code snippet of the regex. Replace this text with your summary.
+In this tutorial, we will be looking at regex that validate email addresses. 
+
+These could look like:
+* /([a-z0-9_.-]+)@([\da-z.-]+).([a-z]{2,3})/
+* /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
+* /^[a-zA-Z0-9_-]{0,}([.]?[a-zA-Z0-9]{1,})@(gmail|hotmail|yahoo).com$/gm
+
+A great way to test the preceding exoressions out, head to [regexr.com](https://regexr.com/). This site is a valuable tool for testing out RegEx in real time. It comes with a very helpful cheatsheet! If testing multiple objects at time, make sure to check the "global" and "multiline" flags and select the "List" tool is highly recommended.
 
 ## Table of Contents
 
@@ -20,30 +29,177 @@ Briefly summarize the regex you will be describing and what you will explain. In
 - [Back-references](#back-references)
 - [Look-ahead and Look-behind](#look-ahead-and-look-behind)
 
-## Regex Components
+## **Regex Components**
 
-### Anchors
+*****
 
-### Quantifiers
+### **Anchors**
+**^ ?**
 
-### OR Operator
+"^" At the start (Example: ^hot will match any string that starts with "hot")
 
-### Character Classes
+"$" At the end (Example: mail$ will match any string that ends with "mail". This could include "hotmail" or "gmail", etc.)
 
-### Flags
+**In the second example in the summary**
+* /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
 
-### Grouping and Capturing
+The "^" requires a word to follow signified by the "\w"
 
-### Bracket Expressions
+The "$" at the end requires one or more "(\.\w{2,3})" which is a grouping that would include something like ".com", ".org" or ".co"; the "+" following the group in parenthesis is a quantifier and will be covered in that section.
 
-### Greedy and Lazy Match
+**In the third example in the summary**
+* /^[a-zA-Z0-9_-]{0,}([.]?[a-zA-Z0-9]{1,})@(gmail|hotmail|yahoo).com$/gm
 
-### Boundaries
+We use the "$" to be extra specific requiring the user to have a gmail, hotmail or yahoo email account.
 
-### Back-references
+*****
 
-### Look-ahead and Look-behind
+### **Quantifiers**
+**\* + ? {}**
 
-## Author
+"*" Will match zero or more of the preceding value. "{0,}" Will do the same, so these values are interchangeable. For example "com{0,}" will match a string that has "co" followed by zero or more "m". If we were to remove the comma, "com{0}", this would contradict the "m" and would only match "co". So the comma is the "or more" expression here.
 
-A short section about the author with a link to the author's GitHub profile (replace with your information and a link to your profile)
+"+" Will match one or more of the preceding value. "{1,}" Is interchangable in this case. For example "com+" or "com{1,}" would match "com", "comm" or even "commmmmmm", but not "co".
+
+"?" or "{0,1}" Will match zero or one of the preceding value. "com?" Would match either "com" or "co", but not "commm" in this case.
+
+**We use a combination of all of these in the summary codes, but here are a couple key examples
+* "([a-z]{2,3})" will match lowercase strings like "com", "co", "org" and "net", but not "c" or "nett"
+* "\w+" will match lowercase letters with one or more lowercase letters after
+
+*****
+
+### **OR Operator**
+**| []**
+
+"|" Is the expression for "or". We used it in the third summary example:
+* /^[a-zA-Z0-9_-]{0,}([.]?[a-zA-Z0-9]{1,})@(gmail|hotmail|yahoo).com$/gm
+
+Here "(gmail|hotmail|yahoo)" matches a user's gmail, hotmail, or yahoo account
+
+"[]" Is another expression for "or", it surrounds the accepted values and works well with quantifiers. For example, if a user's email can contain lowercase letters and numbers, the expression would be: 
+* /[a-z0-9]+/
+
+This would be one character "a" through "z" OR "0" through "9". The "+" would look for this to happen one or more times. Accepted strings would be "jtaustin", "jtaustin19" or "j7au571n". It would not accept "Jtaustin19" unless we put an "A-Z" uppercase value inside the brackets.
+
+*****
+
+### **Character Classes**
+**\d \w \s**
+
+"\d" Will match a single digit character. This is interchangeable with "0-9". "\D" Is the inverse of this and will match any letter or special character like "!".
+
+"\w" Will match a single word character. This is interchangeable with "[a-zA-Z]". "\W" Is the inverse of this, matching any character that is not "a-z" or "A-Z", like "0-9" or special characters like "!".
+
+"\s" Will match any white space. We won't use this for checking emails, however the "\S" will negate the white space, which could be useful. For example "\S{0,}@gmail.com" would match any non-white-space string @gmail.com. However, this would allow extra characters like "!" or even "@" which could confuse email systems, so it's better if we specify.
+
+*****
+
+### **Flags**
+**/g /m /i**
+
+RegEx usually is in between two slashes "/^onlythisemail@gmail.com$/". We can specify and even combine flags at the end (after the last forward slash) to do different things:
+* Global, "/g", will continue to match strings after finding the first matching value
+* Multi-line, "/m", combined with the anchors "^" and "$" will match the start and end of a line
+* Case insensitive, "/i", will ignore case, making the whole expression case insensitive
+
+*****
+
+### **Grouping and Capturing**
+**()**
+
+By placing values inside parenthesis, we are capturing a group. For example:
+* /([a-zA-Z0-9_-]{0,})([.]?[a-zA-Z0-9]{1,})/
+
+In this expression, we are capturing two groups of strings. The first group "([a-zA-Z0-9_-]{0,})" will capture a substring of characters that happen zero or more times. The second group "([.]?[a-zA-Z0-9]{1,})" will capture a substring that at most has one "." character. combining these together will match strings such as:
+* josh_t_austin
+* jtaustin
+* Joshua.Austin
+
+We also used grouping in "@(gmail|hotmail|yahoo).com". In this example, "gmail" captures a group of exact characters that must match exactly. Throwing the "or" operator in there, "|", allows us to capture more than one group of characters.
+
+*****
+
+### **Bracket Expressions**
+**[]**
+
+Placing values inside of brackets will match strings that have any of these values. For example:
+* /[gmail]/
+
+This would match either a "g", or an "m", or "a" or "i" or "l" for that! It would not match the entire string, so the above example would not work very well.
+
+On the other hand:
+* /[a-zA-Z]/
+
+This would match any of the characters within the brackets, "a" through "z" OR "A" through "Z" making it case insensitive.
+
+*****
+
+### **Greedy and Lazy Match**
+*** + {}** - Greedy\
+**?** - Lazy
+
+"*" "+" and "{}" Are greedy matches. These will match the defined string and values in between and keep on matching until all possibilities are found.
+* /<.+>/
+
+This example would be useful if trying to capture a "div" container with everything between the "div"s.
+* /<.+?>/
+
+Combining "*" "+" or "{}" with "?" will create a lazy match and in the "div" example would only capture the "div"s, but nothing in between.
+
+This may come in handy if we were trying to capture what email engines user's had with an expression like this:
+* /@.+[.]/g
+
+But in this example, both greedy and lazy matches will match the same values.
+
+*****
+
+### **Boundaries**
+**\b \B**
+
+Boundaries act like the anchors "^" and "$". Surrounding exact characters with the lowercase \b:
+* \bgmail\b
+
+This will match only "gmail" string. Useful if we're trying to filter specific email engines.
+* \Bgmail\B
+
+This would likely not match any emails since the "\B" looks for an exact match surrounded by word characters, not "@" or ".".
+* \Bmai\B
+
+This would match the string "mai" in "gmail", but again, this wouldn't be very useful for emails.
+
+*****
+
+### **Back-references**
+**\1**
+
+Back-references will match the same text that was matched by a previous group.
+* /(joshua)[.]\1@([a-z]{1,})[.]([a-z]{2,3})/
+
+The "\1" here is a back-reference to the first capturing group "(joshua)", looking for the same value to repeat. Not very useful in capturing emails unless someone has an email like "joshua.joshua@testmail.com".
+
+*****
+
+### **Look-ahead and Look-behind**
+**(?=)** - Look-ahead\
+**(?<=)** - Look-behind
+
+"(?=)" Will match values only if they are followed by values that are specified within the parenthesis.
+* /(g|hot)(?=mail)/
+
+This expression would match the "g" or "hot" string only if they are followed by the word "mail".
+* /(?<=hot)mail/
+
+This expression would match the "mail" string only if preceded by "hot".
+
+*****
+
+## **Author**
+
+**Joshua Austin**
+
+Full Stack Developer
+
+* GitHub: [Jtaustin19](https://github.com/Jtaustin19)
+* LinkedIn: [Joshua Austin](https://www.linkedin.com/in/josh-austin-749904190/)
+* Email: Jtaustin19@icloud.com
